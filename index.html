@@ -1,243 +1,57 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELEVATOR FREE FALL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>HOT AIR: DEATH TRAP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0b090a; font-family: 'Montserrat', sans-serif; color: #fff; }
+        .game-container { position: relative; width: 100%; height: 100%; max-width: 500px; margin: 0 auto; background: #161a1d; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; border-left: 2px solid #e5383b; border-right: 2px solid #e5383b; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; z-index: 10; padding-bottom: 5px; }
+        .logo-container { display: flex; flex-direction: column; }
+        .logo-main { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: 2px; background: linear-gradient(180deg, #ffb703 0%, #fb8500 50%, #ff0055 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(251, 133, 0, 0.5); animation: burn 0.15s infinite alternate; }
+        .logo-sub { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 9px; letter-spacing: 5px; color: #ba181b; text-transform: uppercase; margin-top: -2px; text-shadow: 0 0 5px rgba(186, 24, 27, 0.8); }
+        
+        @keyframes burn {
+            0% { transform: translateY(0px) skewX(-1deg); filter: brightness(1); }
+            100% { transform: translateY(-1px) skewX(1deg); filter: brightness(1.2); }
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #080810;
-            font-family: 'Montserrat', sans-serif;
-            color: #fff;
-        }
-        .game-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            background: radial-gradient(circle at center, #150d2a 0%, #07040d 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            border-left: 1px solid rgba(255, 0, 85, 0.1);
-            border-right: 1px solid rgba(255, 0, 85, 0.1);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-        }
-        /* Шапка игры */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 18px;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, #ff0055, #ffcc00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
-        }
-        .balance-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            text-align: right;
-        }
-        .balance-label {
-            font-size: 10px;
-            color: #8c8ca0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .balance-value {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            color: #00ffcc;
-        }
-        /* Главный экран трансляции */
-        .display-area {
-            position: relative;
-            flex-grow: 1;
-            margin: 20px 0;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #030206;
-            border: 2px solid rgba(255, 0, 85, 0.2);
-            box-shadow: inset 0 0 30px rgba(255, 0, 85, 0.2);
-        }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        /* Цифровой оверлей данных поверх холста */
-        .multiplier-overlay {
-            position: absolute;
-            top: 25px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            pointer-events: none;
-            z-index: 5;
-        }
-        .multiplier-text {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 56px;
-            color: #ffffff;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-            transition: transform 0.05s linear;
-        }
-        .status-text {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 5px;
-            color: #ff0055;
-            text-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
-            opacity: 0;
-        }
-        /* Панель управления ставками */
-        .controls-panel {
-            background: rgba(15, 10, 25, 0.6);
-            padding: 15px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-        .bet-selector {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .bet-title {
-            padding-left: 12px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #8c8ca0;
-            text-transform: uppercase;
-        }
-        .bet-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        .bet-display {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            min-width: 60px;
-            text-align: center;
-        }
-        .btn-mini {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-mini:active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        /* Огромная кнопка действия */
-        .btn-action {
-            width: 100%;
-            height: 75px;
-            border-radius: 20px;
-            border: none;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #000;
-            background: linear-gradient(45deg, #00ffcc, #33ff00);
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.15s ease;
-            text-transform: uppercase;
-        }
-        .btn-action::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite linear;
-        }
-        @keyframes shine {
-            0% { transform: translate(-50%, -50%) rotate(45deg); }
-            100% { transform: translate(50%, 50%) rotate(45deg); }
-        }
-        /* Стили кнопки под разные состояния */
-        .btn-action.ready {
-            background: linear-gradient(45deg, #00ffcc, #33ff00);
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
-            color: #050b0a;
-        }
-        .btn-action.falling {
-            background: linear-gradient(45deg, #ff0055, #ff5500);
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6);
-            color: #fff;
-            animation: pulse-button 1s infinite alternate;
-        }
-        .btn-action.braking {
-            background: linear-gradient(45deg, #ffcc00, #ff6600);
-            box-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
-            color: #000;
-        }
-        @keyframes pulse-button {
-            0% { transform: scale(1); }
-            100% { transform: scale(0.98); box-shadow: 0 0 40px rgba(255, 0, 85, 0.8); }
-        }
+
+        .balance-box { background: rgba(0, 0, 0, 0.5); padding: 6px 14px; border-radius: 12px; border: 1px solid #a4161a; text-align: right; box-shadow: inset 0 0 10px rgba(164, 22, 26, 0.3); }
+        .balance-label { font-size: 8px; color: #b7b7a4; text-transform: uppercase; letter-spacing: 1px; }
+        .balance-value { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 15px; color: #64dfdf; }
+        .display-area { position: relative; flex-grow: 1; margin: 15px 0; border-radius: 20px; overflow: hidden; background: #0b090a; border: 2px solid #660708; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+        .multiplier-overlay { position: absolute; top: 25px; left: 0; width: 100%; text-align: center; pointer-events: none; z-index: 5; }
+        .multiplier-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 55px; color: #ffffff; text-shadow: 0 0 20px rgba(229,56,59,0.8); }
+        .controls-panel { background: rgba(22, 26, 29, 0.95); padding: 15px; border-radius: 20px; border: 1px solid rgba(229,56,59,0.2); z-index: 10; }
+        .bet-selector { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: rgba(0, 0, 0, 0.4); padding: 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
+        .bet-title { padding-left: 10px; font-size: 11px; font-weight: 700; color: #b7b7a4; text-transform: uppercase; }
+        .bet-actions { display: flex; gap: 6px; align-items: center; }
+        .bet-display { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; min-width: 50px; text-align: center; }
+        .btn-mini { background: #660708; border: 1px solid #a4161a; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+        .game-buttons { display: flex; gap: 10px; }
+        .btn-main { flex: 1; height: 70px; border-radius: 16px; border: none; font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.1s ease; }
+        .btn-gas { background: linear-gradient(180deg, #ffb703, #fb8500); color: #000; box-shadow: 0 0 25px rgba(251,133,0,0.5); }
+        .btn-gas:active { background: #ffb703; transform: scale(0.97); }
+        .btn-cashout { background: linear-gradient(180deg, #52b788, #2d6a4f); color: #fff; box-shadow: 0 0 25px rgba(82,183,136,0.5); display: none; }
+        .btn-start { background: linear-gradient(180deg, #e5383b, #a4161a); color: #fff; box-shadow: 0 0 20px rgba(229,56,59,0.4); }
     </style>
 </head>
 <body>
 
-<div class="game-container" id="gameScreen">
+<div class="game-container">
     <div class="header">
-        <div class="logo">FREE FALL</div>
+        <div class="logo-container">
+            <div class="logo-main">HOT AIR</div>
+            <div class="logo-sub">death trap</div>
+        </div>
         <div class="balance-box">
-            <div class="balance-label">Демо Баланс</div>
+            <div class="balance-label">Баланс</div>
             <div class="balance-value" id="balanceDisplay">$1000.00</div>
         </div>
     </div>
@@ -245,7 +59,6 @@
     <div class="display-area" id="viewport">
         <div class="multiplier-overlay">
             <div class="multiplier-text" id="multText">1.00x</div>
-            <div class="status-text" id="statusText">ПАДЕНИЕ...</div>
         </div>
         <canvas id="gameCanvas"></canvas>
     </div>
@@ -259,95 +72,39 @@
                 <button class="btn-mini" onclick="adjustBet('X2')">X2</button>
             </div>
         </div>
-        <button class="btn-action ready" id="actionBtn">ПОЕХАЛИ</button>
+        
+        <div class="game-buttons">
+            <button class="btn-main btn-start" id="startBtn">ВЗЛЕТ</button>
+            <button class="btn-main btn-gas" id="gasBtn" style="display: none;">ГАЗ 🔥</button>
+            <button class="btn-main btn-cashout" id="cashBtn">ЗАБРАТЬ</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Аудиосистема (Синтезатор звуков)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type, freq = 200, duration = 0.5) {
-        try {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            if (type === 'start') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'fall') {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                osc.start(); osc.stop(audioCtx.currentTime + duration);
-            } else if (type === 'brake') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.start(); osc.stop(audioCtx.currentTime + duration);
-            } else if (type === 'crash') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(80, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(20, audioCtx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.6);
-            } else if (type === 'win') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            }
-        } catch(e) {}
-    }
-
-    // Инициализация Canvas
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const viewport = document.getElementById('viewport');
 
-    function resizeCanvas() {
-        canvas.width = viewport.clientWidth;
-        canvas.height = viewport.clientHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    function resize() { canvas.width = viewport.clientWidth; canvas.height = viewport.clientHeight; }
+    resize(); window.addEventListener('resize', resize);
 
-    // Игровая логика и переменные
     let balance = 1000.00;
     let currentBet = 10;
-    let gameState = 'READY'; // READY, FALLING, BRAKING, CRASHED, WON
+    let gameState = 'READY';
     let multiplier = 1.00;
-    let crashPoint = 0;
-    let startTime = 0;
-    let stopTime = 0;
-    
-    // Параметры анимации
-    let elevatorY = 100; 
-    let targetElevatorY = 100;
-    let speedY = 0;
-    let shakeIntensity = 0;
-    let backgroundScrollY = 0;
-    let particles = [];
-    let backgroundFloors = [];
 
-    // Элементы UI
+    let balloon = { x: 80, y: 200, radius: 22, velocity: 0, gravity: 0.22, thrust: 0.45, isGasOn: false };
+    let teethWidth = 30;
+    let teethHeight = 45;
+    let pipeScroll = 0;
+
     const multText = document.getElementById('multText');
-    const statusText = document.getElementById('statusText');
-    const actionBtn = document.getElementById('actionBtn');
+    const startBtn = document.getElementById('startBtn');
+    const gasBtn = document.getElementById('gasBtn');
+    const cashBtn = document.getElementById('cashBtn');
     const balanceDisplay = document.getElementById('balanceDisplay');
     const betDisplay = document.getElementById('betDisplay');
-    const gameScreen = document.getElementById('gameScreen');
-
-    // Генерация фоновых этажей шахты лифта
-    for(let i=0; i<15; i++) {
-        backgroundFloors.push({ y: i * 60, number: 100 - i });
-    }
 
     function adjustBet(type) {
         if (gameState !== 'READY') return;
@@ -356,256 +113,109 @@
         betDisplay.innerText = `$${currentBet}`;
     }
 
-    // Спавн частиц (искры, дым, осколки)
-    function spawnParticles(x, y, count, type) {
-        for (let i = 0; i < count; i++) {
-            particles.push({
-                x: x,
-                y: y,
-                vx: (Math.random() - 0.5) * (type === 'crash' ? 15 : 6),
-                vy: (Math.random() - 0.5) * (type === 'crash' ? 15 : 6) - (type === 'brake' ? 3 : 0),
-                size: Math.random() * (type === 'smoke' ? 15 : 3) + 2,
-                color: type === 'spark' ? `hsl(${Math.random() * 20 + 15}, 100%, 60%)` : 
-                       type === 'smoke' ? `rgba(150, 150, 160, ${Math.random() * 0.3 + 0.1})` : '#ff0055',
-                life: 1.0,
-                decay: Math.random() * 0.03 + 0.01,
-                type: type
-            });
-        }
-    }
+    function gasOn() { balloon.isGasOn = true; }
+    function gasOff() { balloon.isGasOn = false; }
 
-    // Управление кнопкой действия
-    function onActionPress() {
-        if (gameState === 'READY') {
-            if (balance < currentBet) return;
-            // Старт раунда
-            balance -= currentBet;
-            balanceDisplay.innerText = `$${balance.toFixed(2)}`;
-            gameState = 'FALLING';
-            multiplier = 1.00;
-            statusText.style.opacity = '1';
-            statusText.innerText = "ПАДЕНИЕ...";
-            statusText.style.color = '#ff0055';
-            
-            // Настройка логики крэша
-            let rand = Math.random();
-            if (rand < 0.1) crashPoint = 1.01 + Math.random() * 0.5;
-            else if (rand < 0.5) crashPoint = 1.5 + Math.random() * 2;
-            else if (rand < 0.8) crashPoint = 3.5 + Math.random() * 5;
-            else crashPoint = 8.5 + Math.random() * 20;
+    gasBtn.addEventListener('mousedown', gasOn);
+    gasBtn.addEventListener('mouseup', gasOff);
+    gasBtn.addEventListener('touchstart', (e) => { e.preventDefault(); gasOn(); });
+    gasBtn.addEventListener('touchend', (e) => { e.preventDefault(); gasOff(); });
 
-            startTime = performance.now();
-            actionBtn.className = "btn-action falling";
-            actionBtn.innerText = "СТОП-КРАН!";
-            playSound('start');
-        } else if (gameState === 'FALLING') {
-            // Игрок жмет на стоп
-            gameState = 'BRAKING';
-            actionBtn.className = "btn-action braking";
-            actionBtn.innerText = "ТОРМОЖЕНИЕ...";
-            stopTime = performance.now();
-        }
-    }
-
-    actionBtn.addEventListener('mousedown', onActionPress);
-    actionBtn.addEventListener('touchstart', (e) => { e.preventDefault(); onActionPress(); });
-
-    // Главный цикл рендеринга и анимации
-    function update(timestamp) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    startBtn.addEventListener('click', () => {
+        if (balance < currentBet) return;
+        balance -= currentBet;
+        balanceDisplay.innerText = `$${balance.toFixed(2)}`;
         
-        let cx = canvas.width / 2;
-        let cy = canvas.height / 2;
-
-        // Эффект содрогания экрана
-        if (shakeIntensity > 0) {
-            ctx.save();
-            let dx = (Math.random() - 0.5) * shakeIntensity;
-            let dy = (Math.random() - 0.5) * shakeIntensity;
-            ctx.translate(dx, dy);
-            shakeIntensity *= 0.92; // затухание
-            if (shakeIntensity < 0.1) shakeIntensity = 0;
-        }
-
-        // РАСЧЕТ ИГРОВЫХ СОСТОЯНИЙ
-        if (gameState === 'FALLING') {
-            let elapsed = (timestamp - startTime) / 1000;
-            // Бешеный экспоненциальный рост множителя
-            multiplier = Math.exp(elapsed * 0.45);
-            multText.innerText = multiplier.toFixed(2) + 'x';
-            multText.style.color = '#ffffff';
-
-            // Эффекты движения кабины и шахты
-            backgroundScrollY += multiplier * 5;
-            shakeIntensity = Math.min(6, multiplier * 0.6);
-            
-            // Звук пикирования
-            if (Math.random() < 0.15) playSound('fall', 100 + multiplier * 40, 0.1);
-
-            // Рендеринг боковых искр трения лифта
-            if (Math.random() < 0.4) {
-                spawnParticles(cx - 50, cy + 30, 2, 'spark');
-                spawnParticles(cx + 50, cy + 30, 2, 'spark');
-            }
-
-            if (multiplier >= crashPoint) {
-                // КРЭШ! Лифт разбился
-                gameState = 'CRASHED';
-                shakeIntensity = 30;
-                spawnParticles(cx, cy + 20, 50, 'crash');
-                spawnParticles(cx, cy + 20, 30, 'spark');
-                multText.innerText = 'ВЗРЫВ!';
-                multText.style.color = '#ff0055';
-                statusText.innerText = `РАЗБИЛСЯ НА ${crashPoint.toFixed(2)}x`;
-                actionBtn.className = "btn-action ready";
-                actionBtn.innerText = "РАЗБИЛСЯ!";
-                playSound('crash');
-                setTimeout(() => { resetGame(); }, 2500);
-            }
-        } 
-        else if (gameState === 'BRAKING') {
-            // Эффект тормозного пути
-            backgroundScrollY *= 0.85; 
-            shakeIntensity = 12;
-            
-            // Генерируем клубы дыма и жесткие тормозные искры
-            spawnParticles(cx + (Math.random() - 0.5)*80, cy + 40, 3, 'spark');
-            spawnParticles(cx + (Math.random() - 0.5)*60, cy + 40, 5, 'smoke');
-            playSound('brake', 800 + Math.random()*200, 0.05);
-
-            if (Math.random() < 0.1) {
-                // Успешная остановка!
-                gameState = 'WON';
-                let winAmount = currentBet * multiplier;
-                balance += winAmount;
-                balanceDisplay.innerText = `$${balance.toFixed(2)}`;
-                multText.innerText = '+' + winAmount.toFixed(2) + '$';
-                multText.style.color = '#33ff00';
-                statusText.innerText = `ФИКСАЦИЯ: ${multiplier.toFixed(2)}x`;
-                statusText.style.color = '#33ff00';
-                actionBtn.className = "btn-action ready";
-                actionBtn.innerText = "ЕСТЬ ВЫИГРЫШ!";
-                playSound('win');
-                setTimeout(() => { resetGame(); }, 2800);
-            }
-        }
-
-        // РЕНДЕРИНГ ШАХТЫ (Задний план)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-        ctx.lineWidth = 2;
-        // Задние балки конструкции
-        for (let i = 0; i < canvas.width; i += 40) {
-            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-        }
-
-        // Бегущие этажи
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.font = 'bold 12px Orbitron';
-        backgroundFloors.forEach(floor => {
-            if (gameState === 'FALLING') {
-                floor.y += multiplier * 4;
-            }
-            if (floor.y > canvas.height) {
-                floor.y = 0;
-                floor.number = Math.max(1, floor.number - 15);
-            }
-            ctx.fillText(`FL-0${floor.number}`, cx - 140, floor.y);
-            ctx.fillText(`FL-0${floor.number}`, cx + 100, floor.y);
-            
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
-            ctx.fillRect(0, floor.y, canvas.width, 2);
-        });
-
-        // Железные рельсы лифта
-        ctx.strokeStyle = '#251c3d';
-        ctx.lineWidth = 6;
-        ctx.beginPath(); ctx.moveTo(cx - 60, 0); ctx.lineTo(cx - 60, canvas.height); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + 60, 0); ctx.lineTo(cx + 60, canvas.height); ctx.stroke();
+        gameState = 'FLYING';
+        multiplier = 1.00;
+        balloon.y = canvas.height / 2;
+        balloon.velocity = 0;
         
-        // Подсветка рельс (аварийный неон)
-        ctx.strokeStyle = gameState === 'FALLING' ? 'rgba(255, 0, 85, 0.3)' : 'rgba(0, 255, 204, 0.2)';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(cx - 60, 0); ctx.lineTo(cx - 60, canvas.height); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + 60, 0); ctx.lineTo(cx + 60, canvas.height); ctx.stroke();
+        startBtn.style.display = 'none';
+        gasBtn.style.display = 'block';
+        cashBtn.style.display = 'block';
+    });
 
-        // АНИМАЦИЯ ЧАСТИЦ
-        particles.forEach((p, index) => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life -= p.decay;
-            if (p.life <= 0) {
-                particles.splice(index, 1);
-            } else {
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.life;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
-            }
-        });
-
-        // РЕНДЕРИНГ КАБИНЫ ЛИФТА (Главный объект)
-        if (gameState !== 'CRASHED') {
-            ctx.save();
-            // Свечение лифта
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = gameState === 'FALLING' ? '#ff0055' : '#00ffcc';
-
-            // Корпус кабины
-            let grad = ctx.createLinearGradient(cx - 50, cy - 40, cx + 50, cy + 40);
-            grad.addColorStop(0, '#2e2547');
-            grad.addColorStop(1, '#130e24');
-            ctx.fillStyle = grad;
-            ctx.strokeStyle = gameState === 'FALLING' ? '#ff0055' : '#00ffcc';
-            ctx.lineWidth = 3;
-            
-            // Скругленный хай-тек лифт
-            ctx.beginPath();
-            ctx.roundRect(cx - 50, cy - 40, 100, 80, 12);
-            ctx.fill();
-            ctx.stroke();
-
-            // Большое стекло кабины
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.05)';
-            if (gameState === 'FALLING') ctx.fillStyle = 'rgba(255, 0, 85, 0.08)';
-            ctx.beginPath();
-            ctx.roundRect(cx - 40, cy - 30, 80, 45, 6);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            // Электронное светящееся табло внутри лифта
-            ctx.fillStyle = gameState === 'FALLING' ? '#ff0055' : '#00ffcc';
-            ctx.font = '10px Orbitron';
-            ctx.fillText("SYS: OK", cx - 22, cy - 10);
-            
-            // Внутренние линии дизайна
-            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-            ctx.beginPath(); ctx.moveTo(cx - 45, cy + 25); ctx.lineTo(cx + 45, cy + 25); ctx.stroke();
-
-            ctx.restore();
-        }
-
-        if (shakeIntensity > 0) ctx.restore();
-
-        requestAnimationFrame(update);
-    }
+    cashBtn.addEventListener('click', () => {
+        if (gameState !== 'FLYING') return;
+        gameState = 'WON';
+        let winAmount = currentBet * multiplier;
+        balance += winAmount;
+        balanceDisplay.innerText = `$${balance.toFixed(2)}`;
+        multText.innerText = `+${winAmount.toFixed(2)}$`;
+        multText.style.color = '#52b788';
+        setTimeout(resetGame, 2000);
+    });
 
     function resetGame() {
         gameState = 'READY';
-        multiplier = 1.00;
         multText.innerText = '1.00x';
-        multText.style.color = '#ffffff';
-        statusText.style.opacity = '0';
-        actionBtn.className = "btn-action ready";
-        actionBtn.innerText = "ПОЕХАЛИ";
+        multText.style.color = '#fff';
+        startBtn.style.display = 'block';
+        gasBtn.style.display = 'none';
+        cashBtn.style.display = 'none';
+        balloon.isGasOn = false;
     }
 
-    // Запуск цикла анимации
-    requestAnimationFrame(update);
-</script>
+    function draw(timestamp) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (gameState === 'FLYING') {
+            pipeScroll += 2.8; 
+            multiplier += 0.01;
+            multText.innerText = multiplier.toFixed(2) + 'x';
+        }
+
+        ctx.fillStyle = '#660708';
+        ctx.beginPath();
+        for (let x = -(pipeScroll % teethWidth); x < canvas.width + teethWidth; x += teethWidth) {
+            ctx.moveTo(x, 0); ctx.lineTo(x + teethWidth / 2, teethHeight); ctx.lineTo(x + teethWidth, 0);
+        }
+        ctx.fill();
+
+        ctx.beginPath();
+        for (let x = -(pipeScroll % teethWidth); x < canvas.width + teethWidth; x += teethWidth) {
+            ctx.moveTo(x, canvas.height); ctx.lineTo(x + teethWidth / 2, canvas.height - teethHeight); ctx.lineTo(x + teethWidth, canvas.height);
+        }
+        ctx.fill();
+
+        if (gameState === 'FLYING') {
+            if (balloon.isGasOn) balloon.velocity -= balloon.thrust;
+            else balloon.velocity += balloon.gravity;
+            balloon.y += balloon.velocity;
+
+            if (balloon.y - balloon.radius <= teethHeight || balloon.y + balloon.radius >= canvas.height - teethHeight) {
+                gameState = 'CRASHED';
+                multText.innerText = 'ПРОКОЛ!';
+                multText.style.color = '#e5383b';
+                setTimeout(resetGame, 2000);
+            }
+        }
+
+        if (gameState !== 'CRASHED') {
+            let cx = balloon.x; let cy = balloon.y;
+
+            if (balloon.isGasOn && gameState === 'FLYING') {
+                let fireGrad = ctx.createLinearGradient(cx, cy + 15, cx, cy + 35);
+                fireGrad.addColorStop(0, '#ffb703'); fireGrad.addColorStop(1, 'rgba(251,133,0,0)');
+                ctx.fillStyle = fireGrad;
+                ctx.beginPath(); ctx.moveTo(cx - 8, cy + 15); ctx.lineTo(cx, cy + 35); ctx.lineTo(cx + 8, cy + 15); ctx.fill();
+            }
+
+            ctx.fillStyle = '#b7b7a4'; ctx.fillRect(cx - 8, cy + 18, 16, 10);
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(cx - 6, cy); ctx.lineTo(cx - 6, cy + 18); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx + 6, cy); ctx.lineTo(cx + 6, cy + 18); ctx.stroke();
+
+            let balloonGrad = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, balloon.radius);
+            balloonGrad.addColorStop(0, '#e5383b'); balloonGrad.addColorStop(1, '#660708');
+            ctx.fillStyle = balloonGrad; ctx.beginPath(); ctx.arc(cx, cy, balloon.radius, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#ba181b'; ctx.lineWidth = 2; ctx.stroke();
+        }
+
+        requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+</script>
 </body>
 </html>
